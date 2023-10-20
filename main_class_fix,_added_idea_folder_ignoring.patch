@@ -1,0 +1,98 @@
+Subject: [PATCH] main class fix, added idea folder ignoring
+---
+Index: .gitignore
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.gitignore b/.gitignore
+--- a/.gitignore	(revision 841a8f14e1c18e2bd5bcaab513fc5d46f5585ac1)
++++ b/.gitignore	(revision e344e9762816576181378dbf7a4c1e321a00c87d)
+@@ -5,6 +5,7 @@
+ !**/src/test/**/build/
+ 
+ ### IntelliJ IDEA ###
++.idea
+ .idea/modules.xml
+ .idea/jarRepositories.xml
+ .idea/compiler.xml
+Index: src/Main.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Main.java b/src/main/java/com/example/fx/Main.java
+rename from src/Main.java
+rename to src/main/java/com/example/fx/Main.java
+--- a/src/Main.java	(revision 841a8f14e1c18e2bd5bcaab513fc5d46f5585ac1)
++++ b/src/main/java/com/example/fx/Main.java	(revision e344e9762816576181378dbf7a4c1e321a00c87d)
+@@ -1,32 +1,20 @@
+-import javafx.application.Application;
++package com.example.fx;
++
++import javafx.concurrent.Worker;
+ import javafx.scene.Group;
+-import javafx.scene.Scene;
+ import javafx.scene.web.WebEngine;
+ import javafx.scene.web.WebView;
+-import javafx.stage.Stage;
+-import javafx.concurrent.Worker.State;
+ import netscape.javascript.JSObject;
+-//import Worker.State;
++import org.jetbrains.annotations.NotNull;
+ 
++public class Main {
+ 
+-public class Main extends Application {
+-    public static void main(String[] args) { launch(args); }
+-    //©Override
+-    public void start(Stage primaryStage) throws Exception {
++    public static void main(String[] args) {
+         WebView webView = new WebView();
+-        WebEngine webEngine = webView.getEngine();
+-        //webEngine.load("file://");
+-        webEngine.loadContent ( "" +
+-        "<div id='div'>hello world</div>" +
+-                "<script>document.getElementByld('div').style.color='blue';" +
+-                "function changeColor() {" +
+-                "	document.getElementByld('div').style.color='green'" +
+-        "	document.getElementByld('div').innerHTML = myClass.getHello('Oleg')" +
+-        "}</script>" +
+-                "");
++        WebEngine webEngine = getWebEngine(webView);
+ 
+         JSObject jsObject = (JSObject) webEngine.executeScript("window");
+-        jsObject.setMember("myClass", new MyClass());
++        jsObject.setMember("myClass", "hello");
+         webEngine.getLoadWorker()
+                 .stateProperty()
+                 .addListener( (obs, oldValue, newValue) -> {
+@@ -39,13 +27,21 @@
+         group.getChildren().addAll(webView);
+         group.getChildren().addAll();
+ 
+-        primaryStage.setScene(new Scene(group, 400, 300));
+-        primaryStage.show();
++
++
++//        primaryStage.setScene(new Scene(group, 400, 300));
++//        primaryStage.show();
+     }
+-    public class MyClass {
+-        String getHello(String name){
+-            return "hello" + name;
+-        }
++
++    @NotNull
++    private static WebEngine getWebEngine(WebView webView) {
++        WebEngine webEngine = webView.getEngine();
++        webEngine.loadContent ( "<div id='div'>hello world</div>" +
++                "<script>document.getElementByld('div').style.color='blue';" +
++                "function changeColor() {" +
++                "	document.getElementByld('div').style.color='green'" +
++                "	document.getElementByld('div').innerHTML = myClass.getHello('Oleg')" +
++                "}</script>");
++        return webEngine;
+     }
+ }
+-
